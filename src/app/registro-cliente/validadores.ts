@@ -4,7 +4,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 export const EDAD_MINIMA = 18;
 export const NOMBRES_MIN = 3;
 export const NOMBRES_MAX = 80;
-export const DNI_LONGITUD = 9;
+export const DNI_LONGITUD = 8;
 
 /** Exige dominio con extensión (Validators.email por sí solo acepta "usuario@dominio"). */
 export const PATRON_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
