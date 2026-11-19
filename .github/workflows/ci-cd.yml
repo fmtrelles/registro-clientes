@@ -1,4 +1,4 @@
-name: CI/CD Angular
+name: CI Angular
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   ci:
-    name: CI (tests + build)
+    name: CI (instalar, probar y compilar)
     runs-on: ubuntu-latest
     steps:
       - name: Obtener el código
@@ -23,6 +23,7 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      # Si una prueba falla, el job se detiene aquí y no se genera el build
       - name: Ejecutar pruebas
         run: npm test -- --no-watch
 
