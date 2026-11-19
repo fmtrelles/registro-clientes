@@ -1,0 +1,37 @@
+name: CI/CD Angular
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: CI (tests + build)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener el código
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar pruebas
+        run: npm test -- --no-watch
+
+      - name: Generar build de producción
+        run: npm run build -- --configuration production
+
+      - name: Guardar build como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-angular
+          path: dist/registro-clientes/browser
+          include-hidden-files: true
