@@ -62,20 +62,44 @@
   border-color: var(--primario);
 }
 
-.campo--check {
-  flex-direction: row;
+.campo--error input[type='text'],
+.campo--error input[type='email'],
+.campo--error input[type='tel'],
+.campo--error input[type='date'] {
+  border-color: var(--error);
+}
+
+.campo__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--error);
+}
+
+.check {
+  display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.campo--check label {
+.check label {
+  font-size: 0.875rem;
   font-weight: 400;
 }
 
-.campo--check input {
+.check input {
   width: 18px;
   height: 18px;
+  margin: 0;
   accent-color: var(--primario);
+}
+
+.alerta {
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  color: var(--error);
+  background: var(--error-fondo);
+  border-radius: 8px;
 }
 
 .boton {

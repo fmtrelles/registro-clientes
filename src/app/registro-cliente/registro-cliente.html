@@ -1,41 +1,110 @@
 <section class="tarjeta">
   <header class="tarjeta__cabecera">
     <h1>Registro de cliente</h1>
-    <p>Complete los datos para registrar un nuevo cliente.</p>
+    <p>Complete los datos para registrar un nuevo cliente. Todos los campos son obligatorios.</p>
   </header>
 
-  <form [formGroup]="form" (ngSubmit)="enviar()" class="formulario">
-    <div class="campo">
+  <form [formGroup]="form" (ngSubmit)="enviar()" class="formulario" novalidate>
+    <div class="campo" [class.campo--error]="error('nombres')">
       <label for="nombres">Nombres y apellidos</label>
-      <input id="nombres" type="text" formControlName="nombres" autocomplete="name" />
+      <input
+        id="nombres"
+        type="text"
+        formControlName="nombres"
+        autocomplete="name"
+        placeholder="Ej. María López Torres"
+        [attr.aria-invalid]="!!error('nombres')"
+        aria-describedby="nombres-error"
+      />
+      @if (error('nombres'); as mensaje) {
+        <p class="campo__error" id="nombres-error">{{ mensaje }}</p>
+      }
     </div>
 
-    <div class="campo">
+    <div class="campo" [class.campo--error]="error('email')">
       <label for="email">Correo electrónico</label>
-      <input id="email" type="email" formControlName="email" autocomplete="email" />
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        placeholder="nombre@dominio.com"
+        [attr.aria-invalid]="!!error('email')"
+        aria-describedby="email-error"
+      />
+      @if (error('email'); as mensaje) {
+        <p class="campo__error" id="email-error">{{ mensaje }}</p>
+      }
     </div>
 
     <div class="fila">
-      <div class="campo">
+      <div class="campo" [class.campo--error]="error('dni')">
         <label for="dni">DNI</label>
-        <input id="dni" type="text" inputmode="numeric" formControlName="dni" />
+        <input
+          id="dni"
+          type="text"
+          inputmode="numeric"
+          formControlName="dni"
+          placeholder="8 dígitos"
+          [attr.aria-invalid]="!!error('dni')"
+          aria-describedby="dni-error"
+        />
+        @if (error('dni'); as mensaje) {
+          <p class="campo__error" id="dni-error">{{ mensaje }}</p>
+        }
       </div>
 
-      <div class="campo">
+      <div class="campo" [class.campo--error]="error('telefono')">
         <label for="telefono">Celular</label>
-        <input id="telefono" type="tel" inputmode="numeric" formControlName="telefono" autocomplete="tel" />
+        <input
+          id="telefono"
+          type="tel"
+          inputmode="numeric"
+          formControlName="telefono"
+          autocomplete="tel"
+          placeholder="9XXXXXXXX"
+          [attr.aria-invalid]="!!error('telefono')"
+          aria-describedby="telefono-error"
+        />
+        @if (error('telefono'); as mensaje) {
+          <p class="campo__error" id="telefono-error">{{ mensaje }}</p>
+        }
       </div>
     </div>
 
-    <div class="campo">
+    <div class="campo" [class.campo--error]="error('fechaNacimiento')">
       <label for="fechaNacimiento">Fecha de nacimiento</label>
-      <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" />
+      <input
+        id="fechaNacimiento"
+        type="date"
+        formControlName="fechaNacimiento"
+        [attr.aria-invalid]="!!error('fechaNacimiento')"
+        aria-describedby="fechaNacimiento-error"
+      />
+      @if (error('fechaNacimiento'); as mensaje) {
+        <p class="campo__error" id="fechaNacimiento-error">{{ mensaje }}</p>
+      }
     </div>
 
-    <div class="campo campo--check">
-      <input id="aceptaTerminos" type="checkbox" formControlName="aceptaTerminos" />
-      <label for="aceptaTerminos">Acepto los términos y condiciones</label>
+    <div class="campo" [class.campo--error]="error('aceptaTerminos')">
+      <div class="check">
+        <input
+          id="aceptaTerminos"
+          type="checkbox"
+          formControlName="aceptaTerminos"
+          [attr.aria-invalid]="!!error('aceptaTerminos')"
+          aria-describedby="aceptaTerminos-error"
+        />
+        <label for="aceptaTerminos">Acepto los términos y condiciones</label>
+      </div>
+      @if (error('aceptaTerminos'); as mensaje) {
+        <p class="campo__error" id="aceptaTerminos-error">{{ mensaje }}</p>
+      }
     </div>
+
+    @if (envioRechazado() && form.invalid) {
+      <p class="alerta" role="alert">Corrija los campos marcados antes de registrar al cliente.</p>
+    }
 
     <button type="submit" class="boton">Registrar cliente</button>
   </form>
