@@ -4,15 +4,52 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 export const EDAD_MINIMA = 18;
 export const NOMBRES_MIN = 3;
 export const NOMBRES_MAX = 80;
+export const DNI_LONGITUD = 8;
 
-/** Solo letras (incluye tildes y ñ) y espacios; debe contener al menos una letra. */
-export const PATRON_NOMBRES = /^\s*[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+(?:\s+[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)*\s*$/;
 /** Exige dominio con extensión (Validators.email por sí solo acepta "usuario@dominio"). */
 export const PATRON_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-/** DNI: exactamente 8 dígitos. */
-export const PATRON_DNI = /^\d{8}$/;
 /** Celular: 9 dígitos y empieza con 9. */
 export const PATRON_CELULAR = /^9\d{8}$/;
+
+/** Letras de cualquier idioma (incluye tildes, ñ, ü) y espacios. */
+const LETRAS_Y_ESPACIOS = /^[\p{L} ]+$/u;
+const SOLO_DIGITOS = /^\d+$/;
+
+/**
+ * Validador: solo letras y espacios, sin números ni caracteres especiales.
+ * Errores posibles:
+ *  - contieneNumeros:      el texto tiene al menos un dígito
+ *  - caracteresEspeciales: el texto tiene símbolos (. , - @ # / _ etc.)
+ *  - soloEspacios:         el texto no tiene ninguna letra
+ */
+export const soloLetras: ValidatorFn = (control: AbstractControl<string>) => {
+  const valor = control.value;
+  if (!valor) {
+    return null; // El campo vacío lo controla Validators.required
+  }
+  if (/\d/.test(valor)) {
+    return { contieneNumeros: true };
+  }
+  if (!LETRAS_Y_ESPACIOS.test(valor)) {
+    return { caracteresEspeciales: true };
+  }
+  if (valor.trim() === '') {
+    return { soloEspacios: true };
+  }
+  return null;
+};
+
+/**
+ * Validador: solo dígitos (0-9), sin letras, espacios ni símbolos.
+ * Error posible: soloNumeros
+ */
+export const soloNumeros: ValidatorFn = (control: AbstractControl<string>) => {
+  const valor = control.value;
+  if (!valor) {
+    return null; // El campo vacío lo controla Validators.required
+  }
+  return SOLO_DIGITOS.test(valor) ? null : { soloNumeros: true };
+};
 
 /**
  * Calcula la edad cumplida a partir de una fecha en formato ISO (YYYY-MM-DD),

@@ -1,14 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  DNI_LONGITUD,
   EDAD_MINIMA,
   NOMBRES_MAX,
   NOMBRES_MIN,
   PATRON_CELULAR,
-  PATRON_DNI,
   PATRON_EMAIL,
-  PATRON_NOMBRES,
   edadMinima,
+  soloLetras,
+  soloNumeros,
 } from './validadores';
 
 export interface Cliente {
@@ -28,7 +29,9 @@ const MENSAJES: Record<CampoCliente, Record<string, string>> = {
     required: 'Ingrese sus nombres y apellidos.',
     minlength: `Debe tener al menos ${NOMBRES_MIN} caracteres.`,
     maxlength: `No puede superar los ${NOMBRES_MAX} caracteres.`,
-    pattern: 'Solo se permiten letras y espacios.',
+    contieneNumeros: 'No se permiten números, solo letras.',
+    caracteresEspeciales: 'No se permiten caracteres especiales, solo letras y espacios.',
+    soloEspacios: 'Ingrese sus nombres y apellidos.',
   },
   email: {
     required: 'Ingrese su correo electrónico.',
@@ -37,10 +40,13 @@ const MENSAJES: Record<CampoCliente, Record<string, string>> = {
   },
   dni: {
     required: 'Ingrese su DNI.',
-    pattern: 'El DNI debe tener exactamente 8 dígitos numéricos.',
+    soloNumeros: 'El DNI solo debe contener números (sin letras, espacios ni símbolos).',
+    minlength: `El DNI debe tener exactamente ${DNI_LONGITUD} dígitos.`,
+    maxlength: `El DNI debe tener exactamente ${DNI_LONGITUD} dígitos.`,
   },
   telefono: {
     required: 'Ingrese su número de celular.',
+    soloNumeros: 'El celular solo debe contener números (sin letras, espacios ni símbolos).',
     pattern: 'El celular debe tener 9 dígitos y empezar con 9.',
   },
   fechaNacimiento: {
@@ -53,6 +59,9 @@ const MENSAJES: Record<CampoCliente, Record<string, string>> = {
     required: 'Debe aceptar los términos y condiciones.',
   },
 };
+
+/** Errores que se muestran mientras el usuario escribe (sin esperar a que salga del campo). */
+const ERRORES_INMEDIATOS = new Set(['contieneNumeros', 'caracteresEspeciales', 'soloNumeros']);
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -68,14 +77,22 @@ export class RegistroCliente {
       '',
       [
         Validators.required,
+        soloLetras,
         Validators.minLength(NOMBRES_MIN),
         Validators.maxLength(NOMBRES_MAX),
-        Validators.pattern(PATRON_NOMBRES),
       ],
     ],
     email: ['', [Validators.required, Validators.email, Validators.pattern(PATRON_EMAIL)]],
-    dni: ['', [Validators.required, Validators.pattern(PATRON_DNI)]],
-    telefono: ['', [Validators.required, Validators.pattern(PATRON_CELULAR)]],
+    dni: [
+      '',
+      [
+        Validators.required,
+        soloNumeros,
+        Validators.minLength(DNI_LONGITUD),
+        Validators.maxLength(DNI_LONGITUD),
+      ],
+    ],
+    telefono: ['', [Validators.required, soloNumeros, Validators.pattern(PATRON_CELULAR)]],
     fechaNacimiento: ['', [Validators.required, edadMinima(EDAD_MINIMA)]],
     aceptaTerminos: [false, Validators.requiredTrue],
   });
@@ -87,16 +104,18 @@ export class RegistroCliente {
   readonly envioRechazado = signal(false);
 
   /**
-   * Devuelve el mensaje de error del campo, o null si es válido o el usuario aún no lo tocó.
+   * Devuelve el mensaje de error del campo, o null si es válido o aún no corresponde mostrarlo.
    * Se muestra solo el primer error (el orden sigue al de los validadores declarados).
+   * Los errores de caracteres no permitidos se muestran apenas se escriben; el resto, al salir del campo.
    */
   error(campo: CampoCliente): string | null {
     const control = this.form.controls[campo];
-    if (!control.errors || !control.touched) {
+    if (!control.errors) {
       return null;
     }
     const clave = Object.keys(control.errors)[0];
-    return MENSAJES[campo][clave] ?? 'Valor inválido.';
+    const visible = control.touched || (control.dirty && ERRORES_INMEDIATOS.has(clave));
+    return visible ? (MENSAJES[campo][clave] ?? 'Valor inválido.') : null;
   }
 
   enviar(): void {
