@@ -1,0 +1,26 @@
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+
+.marca {
+  font-weight: 700;
+}
+
+.barra a {
+  color: var(--texto-suave);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.barra a.activo {
+  color: var(--primario);
+}
+
+.contenido {
+  padding: 40px 16px;
+}

@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+.tarjeta {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+
+.tarjeta__cabecera h1 {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+}
+
+.tarjeta__cabecera p {
+  margin: 0 0 24px;
+  color: var(--texto-suave);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.campo input[type='text'],
+.campo input[type='email'],
+.campo input[type='tel'],
+.campo input[type='date'] {
+  padding: 10px 12px;
+  font: inherit;
+  color: inherit;
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+
+.campo input:focus-visible {
+  outline: 2px solid var(--primario);
+  outline-offset: 1px;
+  border-color: var(--primario);
+}
+
+.campo--check {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.campo--check label {
+  font-weight: 400;
+}
+
+.campo--check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primario);
+}
+
+.boton {
+  margin-top: 6px;
+  padding: 12px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primario);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.boton:hover {
+  background: var(--primario-hover);
+}
+
+.exito {
+  margin-top: 20px;
+  padding: 12px 14px;
+  color: var(--exito);
+  background: var(--exito-fondo);
+  border-radius: 8px;
+}
+
+@media (max-width: 520px) {
+  .tarjeta {
+    padding: 20px 16px;
+  }
+
+  .fila {
+    grid-template-columns: 1fr;
+  }
+}
