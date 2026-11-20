@@ -1,4 +1,4 @@
-name: CI Angular
+name: CI/CD Angular
 
 on:
   push:
@@ -10,6 +10,7 @@ jobs:
   ci:
     name: CI (instalar, probar y compilar)
     runs-on: ubuntu-latest
+
     steps:
       - name: Obtener el código
         uses: actions/checkout@v4
@@ -23,7 +24,6 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
-      # Si una prueba falla, el job se detiene aquí y no se genera el build
       - name: Ejecutar pruebas
         run: npm test -- --no-watch
 
@@ -36,3 +36,27 @@ jobs:
           name: build-angular
           path: dist/registro-clientes/browser
           include-hidden-files: true
+
+  deploy:
+    name: CD (desplegar por FTP)
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar build validado
+        uses: actions/download-artifact@v5
+        with:
+          name: build-angular
+          path: deploy
+
+      - name: Subir aplicación al hosting por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: ./deploy/
+          server-dir: htdocs/
